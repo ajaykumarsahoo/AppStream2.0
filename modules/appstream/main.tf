@@ -1,5 +1,6 @@
 # Main resources for AppStream 2.0
-
+# This module creates an AppStream fleet, stack, and image builder with enhanced user settings.
+#-------------------------------------------------------------------------- 
 resource "aws_appstream_fleet" "this" {
   name                = var.fleet_name
   instance_type       = var.instance_type
@@ -14,9 +15,12 @@ resource "aws_appstream_fleet" "this" {
     security_group_ids = [aws_security_group.appstream.id]
   }
   tags = local.fleet_tags
-  # Add more configuration as needed
+  
 }
-
+#-------------------------------------------------------------------------
+# AppStream Stack
+# This resource defines the stack for the AppStream fleet, including user settings and streaming experience settings
+#-------------------------------------------------------------------------
 resource "aws_appstream_stack" "this" {
   name        = var.stack_name
   description = var.stack_description
@@ -55,8 +59,10 @@ resource "aws_appstream_stack" "this" {
  
   tags = local.fleet_tags
 }
-
+#--------------------------------------------------------------------------
 #Image Builder for AppStream:
+# This resource creates an AppStream image builder for creating custom images
+#--------------------------------------------------------------------------
 resource "aws_appstream_image_builder" "this" {
   name                = var.image_builder_name
   instance_type       = var.image_builder_instance_type
@@ -70,7 +76,7 @@ resource "aws_appstream_image_builder" "this" {
   }
   iam_role_arn = aws_iam_role.appstream_role.arn
   tags = local.fleet_tags
-  # Add more configuration as needed
+  depends_on = [aws_iam_role.appstream_role.arn] 
 }
 
 resource "aws_security_group" "appstream" {
@@ -110,8 +116,10 @@ resource "aws_security_group" "appstream" {
   }
   tags = local.fleet_tags
 }
-
+#--------------------------------------------------------------------------
 #Fleet-Stack Association:
+# This resource associates the AppStream fleet with the stack created above
+#--------------------------------------------------------------------------
 resource "aws_appstream_fleet_stack_association" "this" {
   fleet_name = aws_appstream_fleet.this.name
   stack_name = aws_appstream_stack.this.name
