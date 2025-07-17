@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region
+  region = var.aws_region
   # Optionally, you can add profile or other authentication methods here
   # profile = "your-aws-profile"
 }

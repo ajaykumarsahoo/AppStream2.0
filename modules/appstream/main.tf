@@ -2,24 +2,29 @@
 # This module creates an AppStream fleet, stack, and image builder with enhanced user settings.
 #-------------------------------------------------------------------------- 
 resource "aws_appstream_fleet" "this" {
-  name                = var.fleet_name
-  display_name        = "AppStream 2.0 Fleet"
-  instance_type       = var.instance_type
-  image_name          = var.image_name != "" ? var.image_name : local.appstream_win_server_2019_image
-  fleet_type          = var.fleet_type
+  name                         = var.fleet_name
+  display_name                 = "AppStream 2.0 Fleet"
   compute_capacity {
     # Use desired_sessions for multi-session, desired_instances for single-session
-    desired_instances = var.session_type == "single_session" ? var.desired_instances : null
-    desired_sessions  = var.session_type == "multi_session" ? var.desired_sessions : null
+    desired_instances          = var.session_type == "single_session" ? var.desired_instances : null
+    desired_sessions           = var.session_type == "multi_session" ? var.desired_sessions : null
   }
-  idle_disconnect_timeout_in_seconds = 900 # 15 minutes
+  instance_type                = var.instance_type
+  image_name                   = var.appstream_image != "" ? var.appstream_image : local.appstream_win_server_2019_image
+  fleet_type                   = var.fleet_type
+  stream_view                  = var.stream_view
+  max_user_duration_in_seconds = var.max_user_duration_in_seconds
+  idle_disconnect_timeout_in_seconds = var.idle_disconnect_timeout_in_seconds
+  max_sessions_per_instance    = var.session_type == "multi_session" ? var.max_sessions_per_instance : 0
   enable_default_internet_access = var.enable_default_internet_access
   vpc_config {
-    subnet_ids         = [data.aws_subnet.supported_az_a.id, data.aws_subnet.supported_az_b.id]
-    security_group_ids = [aws_security_group.appstream.id]
+    subnet_ids                 = [data.aws_subnet.supported_az_a.id, data.aws_subnet.supported_az_b.id]
+    security_group_ids         = [aws_security_group.appstream.id]
   }
-  tags = local.fleet_tags
-  
+  tags                        = local.fleet_tags
+  lifecycle {
+    ignore_changes             = [compute_capacity]
+  }
 }
 #-------------------------------------------------------------------------
 # AppStream Stack
@@ -89,20 +94,13 @@ resource "aws_security_group" "appstream" {
   description = "Security group for AppStream resources"
   vpc_id      = var.vpc_id != "" ? var.vpc_id : data.aws_vpc.default.id
 
-  # Allow AppStream ports (3389 for RDP, 4172 for PCoIP, 443 for HTTPS)
+  # Allow AppStream ports (3389 for RDP, 443 for HTTPS)
   ingress {
     from_port   = 3389
     to_port     = 3389
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow RDP from anywhere (for demo, restrict in production)"
-  }
-  ingress {
-    from_port   = 4172
-    to_port     = 4172
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow PCoIP from anywhere (for demo, restrict in production)"
   }
   ingress {
     from_port   = 443
@@ -148,4 +146,5 @@ resource "aws_appstream_user_stack_association" "this" {
   stack_name           = aws_appstream_stack.this.name
   user_name            = aws_appstream_user.this.user_name
   authentication_type  = "USERPOOL"
+  depends_on = [ aws_appstream_stack.this ]
 }

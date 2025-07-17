@@ -76,7 +76,7 @@ variable "image_builder_enable_default_internet_access" {
 variable "image_builder_description" {
   description = "Description for the image builder."
   type        = string
-  default     = "AppStream image builder"
+  default     = "AppStream 2.0 image builder"
 }
 
 variable "image_builder_display_name" {
@@ -124,5 +124,35 @@ variable "streaming_experience_protocol" {
 variable "session_type" {
   description = "Type of session for the fleet: 'single_session' or 'multi_session'."
   type        = string
-  default     = "multi_session"
+  default     = ""
+}
+
+variable "appstream_image" {
+  description = "AppStream image name for the fleet. If not set, uses the value from locals."
+  type        = string
+  default     = ""
+}
+
+variable "max_user_duration_in_seconds" {
+  description = "Maximum duration (in seconds) a user can be connected to a streaming session."
+  type        = number
+  default     = 3600 # 1 hour
+}
+
+variable "idle_disconnect_timeout_in_seconds" {
+  description = "Time (in seconds) after which a user is disconnected due to inactivity."
+  type        = number
+  default     = 900 # 15 minutes
+}
+
+variable "stream_view" {
+  description = "AppStream 2.0 view displayed to users when streaming from the fleet. 'APP' shows only application windows, 'DESKTOP' shows the full OS desktop. Defaults to 'APP'."
+  type        = string
+  default     = "APP"
+}
+
+variable "max_sessions_per_instance" {
+  description = "The maximum number of user sessions on an instance. Only applies to multi-session fleets."
+  type        = number
+  default     = 5
 }

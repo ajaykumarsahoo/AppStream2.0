@@ -23,11 +23,6 @@ data "aws_subnets" "public" {
   }
 }
 
-data "aws_appstream_image" "latest_win_server_2019" {
-  name_regex = "^AppStream-WinServer2019*"
-  most_recent = true
-}
-
 data "aws_subnet" "supported_az_a" {
   filter {
     name   = "vpc-id"
@@ -48,4 +43,9 @@ data "aws_subnet" "supported_az_b" {
     name   = "availability-zone"
     values = ["ap-south-1b"]
   }
+}
+
+data "aws_appstream_image" "latest_win_server_2019" {
+  name_regex = "^AppStream-WinServer2019-*"
+  most_recent = true
 }
