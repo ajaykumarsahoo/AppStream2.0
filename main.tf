@@ -3,7 +3,7 @@ module "appstream" {
 
   # Required variables (replace with your values)
   fleet_name        = "example-fleet"
-  instance_type     = "stream.standard.medium"
-  image_name        = "AppStream-Win-Server-2019-07-15-2021"
+  instance_type     = "stream.standard.small"
+  #image_name        = "AppStream-WinServer2019-05-30-2025"
   stack_name        = "example-stack"
 }

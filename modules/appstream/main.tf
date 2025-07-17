@@ -41,7 +41,7 @@ resource "aws_appstream_stack" "this" {
     permission = "ENABLED"
   }
   user_settings {
-    action = "PRINT_TO_LOCAL_DEVICE"
+    action = "PRINTING_TO_LOCAL_DEVICE"
     permission = "ENABLED"
   }
  

@@ -24,6 +24,6 @@ data "aws_subnets" "public" {
 }
 
 data "aws_appstream_image" "latest_win_server_2019" {
-  name_regex = "^AppStream-Win-Server-2019.*"
+  name_regex = "^AppStream-WinServer2019*"
   most_recent = true
 }
