@@ -20,7 +20,10 @@ resource "aws_appstream_fleet" "this" {
 resource "aws_appstream_stack" "this" {
   name        = var.stack_name
   description = var.stack_description
-
+  
+  storage_connectors {
+    connector_type = "HOMEFOLDERS"
+  }
   user_settings {
     action = "CLIPBOARD_COPY_FROM_LOCAL_DEVICE"
     permission = "ENABLED"
@@ -38,27 +41,18 @@ resource "aws_appstream_stack" "this" {
     permission = "ENABLED"
   }
   user_settings {
-    action = "PERSISTENCE"
-    permission = "ENABLED"
-  }
-  user_settings {
     action = "PRINT_TO_LOCAL_DEVICE"
     permission = "ENABLED"
   }
-  user_settings {
-    action = "STREAMING_EXPERIENCE"
-    permission = "ENABLED"
-  }
+ 
   streaming_experience_settings {
-    preferred_protocol = "TCP"
+    preferred_protocol = var.streaming_experience_protocol
   }
   application_settings {
     enabled = true
-    settings_group = var.appstream_settings_group
+    settings_group = "SettingsGroup"
   }
-  storage_connectors {
-    connector_type = "HOMEFOLDERS"
-  }
+ 
   tags = local.fleet_tags
 }
 

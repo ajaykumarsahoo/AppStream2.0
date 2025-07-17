@@ -109,14 +109,8 @@ variable "stack_description" {
   default     = "AppStream stack for streaming applications with enhanced user settings."
 }
 
-variable "appstream_settings_group" {
-  description = "Application settings group for AppStream stack."
+variable "streaming_experience_protocol" {
+  description = "Preferred protocol for streaming experience settings (TCP or UDP)."
   type        = string
-  default     = "AppStreamDefaultSettingsGroup"
-}
-
-variable "stack_subnet_ids" {
-  description = "Subnet IDs for the AppStream stack. Defaults to public subnets in the default VPC."
-  type        = list(string)
-  default     = []
+  default     = "TCP"
 }
