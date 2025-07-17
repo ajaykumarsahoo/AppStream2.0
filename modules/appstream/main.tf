@@ -13,7 +13,6 @@ resource "aws_appstream_fleet" "this" {
     subnet_ids         = slice(data.aws_subnets.public.ids, 0, 2) # Uses two subnets, typically in two AZs
     security_group_ids = [aws_security_group.appstream.id]
   }
-  iam_role_arn = aws_iam_role.appstream_service_role.arn
   tags = local.fleet_tags
   # Add more configuration as needed
 }
@@ -75,7 +74,7 @@ resource "aws_appstream_image_builder" "this" {
     subnet_ids         = slice(data.aws_subnets.public.ids, 0, 2) # Uses two subnets, typically in two AZs
     security_group_ids = [aws_security_group.appstream.id]
   }
-  iam_role_arn = aws_iam_role.appstream_service_role.arn
+  iam_role_arn = aws_iam_role.appstream_role.arn
   tags = local.fleet_tags
   # Add more configuration as needed
 }
@@ -124,5 +123,3 @@ resource "aws_appstream_fleet_stack_association" "this" {
   stack_name = aws_appstream_stack.this.name
   depends_on = [aws_appstream_fleet.this, aws_appstream_stack.this]
 }
-
-

@@ -13,6 +13,7 @@ __pycache__/
 *.tmp
 *.DS_Store
 .env
+.terraform.lock.hcl
 # Ignore VSCode and OS files
 .vscode/
 Thumbs.db
