@@ -37,10 +37,3 @@ resource "aws_iam_role_policy" "appstream_s3_access" {
     ]
   })
 }
-
-resource "aws_iam_role_policy_attachment" "appstream_s3_access_attachment" {
-  role       = aws_iam_role.appstream_role.name
-  policy_arn = aws_iam_role_policy.appstream_s3_access.arn
-}
-
-

@@ -3,15 +3,19 @@
 #-------------------------------------------------------------------------- 
 resource "aws_appstream_fleet" "this" {
   name                = var.fleet_name
+  display_name        = "AppStream 2.0 Fleet"
   instance_type       = var.instance_type
   image_name          = var.image_name != "" ? var.image_name : local.appstream_win_server_2019_image
   fleet_type          = var.fleet_type
   compute_capacity {
-    desired_instances = var.desired_instances
+    # Use desired_sessions for multi-session, desired_instances for single-session
+    desired_instances = var.session_type == "single_session" ? var.desired_instances : null
+    desired_sessions  = var.session_type == "multi_session" ? var.desired_sessions : null
   }
+  idle_disconnect_timeout_in_seconds = 900 # 15 minutes
   enable_default_internet_access = var.enable_default_internet_access
   vpc_config {
-    subnet_ids         = slice(data.aws_subnets.public.ids, 0, 2) # Uses two subnets, typically in two AZs
+    subnet_ids         = [data.aws_subnet.supported_az_a.id, data.aws_subnet.supported_az_b.id]
     security_group_ids = [aws_security_group.appstream.id]
   }
   tags = local.fleet_tags
@@ -23,6 +27,7 @@ resource "aws_appstream_fleet" "this" {
 #-------------------------------------------------------------------------
 resource "aws_appstream_stack" "this" {
   name        = var.stack_name
+  display_name = "AppStream 2.0 Stack"
   description = var.stack_description
   
   storage_connectors {
@@ -71,12 +76,12 @@ resource "aws_appstream_image_builder" "this" {
   description         = var.image_builder_description
   display_name        = var.image_builder_display_name
   vpc_config {
-    subnet_ids         = slice(data.aws_subnets.public.ids, 0, 2) # Uses two subnets, typically in two AZs
+    subnet_ids         = [data.aws_subnet.supported_az_a.id] # Use only a single supported subnet for image builder
     security_group_ids = [aws_security_group.appstream.id]
   }
   iam_role_arn = aws_iam_role.appstream_role.arn
   tags = local.fleet_tags
-  depends_on = [aws_iam_role.appstream_role.arn] 
+  depends_on = [aws_iam_role.appstream_role] 
 }
 
 resource "aws_security_group" "appstream" {
@@ -124,4 +129,23 @@ resource "aws_appstream_fleet_stack_association" "this" {
   fleet_name = aws_appstream_fleet.this.name
   stack_name = aws_appstream_stack.this.name
   depends_on = [aws_appstream_fleet.this, aws_appstream_stack.this]
+}
+
+#--------------------------------------------------------------------------#
+# User Pool and User Association
+# This resource creates a user pool for the AppStream stack and associates it with the stack
+#--------------------------------------------------------------------------
+resource "aws_appstream_user" "this" {
+  authentication_type = "USERPOOL"
+  user_name           = "ajkumar.brm@gmail.com"
+  first_name          = "Ajay"
+  last_name           = "Kumar"
+  enabled             = true
+}
+
+
+resource "aws_appstream_user_stack_association" "this" {
+  stack_name           = aws_appstream_stack.this.name
+  user_name            = aws_appstream_user.this.user_name
+  authentication_type  = "USERPOOL"
 }

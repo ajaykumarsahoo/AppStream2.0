@@ -26,8 +26,14 @@ variable "fleet_type" {
   default     = "ON_DEMAND"
 }
 
+variable "desired_sessions" {
+  description = "Desired number of user sessions for a multi-session fleet. Only used if fleet_type is ON_DEMAND."
+  type        = number
+  default     = 1
+}
+
 variable "desired_instances" {
-  description = "Number of desired instances in the fleet."
+  description = "Desired number of streaming instances for a single-session fleet. Only used if fleet_type is ALWAYS_ON."
   type        = number
   default     = 1
 }
@@ -113,4 +119,10 @@ variable "streaming_experience_protocol" {
   description = "Preferred protocol for streaming experience settings (TCP or UDP)."
   type        = string
   default     = "TCP"
+}
+
+variable "session_type" {
+  description = "Type of session for the fleet: 'single_session' or 'multi_session'."
+  type        = string
+  default     = "multi_session"
 }
