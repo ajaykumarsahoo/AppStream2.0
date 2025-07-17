@@ -1,0 +1,24 @@
+# Ignore Terraform state and backup files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraformrc
+terraform.tfvars
+*.log
+*.zip
+*.pyc
+__pycache__/
+*.bak
+*.swp
+*.tmp
+*.DS_Store
+.env
+# Ignore VSCode and OS files
+.vscode/
+Thumbs.db
+.DS_Store
+# Ignore Python virtual environments
+venv/
+.env/
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
