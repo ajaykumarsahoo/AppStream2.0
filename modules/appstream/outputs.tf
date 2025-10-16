@@ -10,5 +10,5 @@ output "stack_id" {
 
 output "image_builder_id" {
   description = "ID of the AppStream image builder."
-  value       = aws_appstream_image_builder.this.id
+  value       = length(aws_appstream_image_builder.this) > 0 ? aws_appstream_image_builder.this[0].id : null
 }

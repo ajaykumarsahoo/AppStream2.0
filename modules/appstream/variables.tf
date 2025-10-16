@@ -52,19 +52,13 @@ variable "stack_name" {
 variable "image_builder_name" {
   description = "Name of the AppStream image builder."
   type        = string
-  default     = "example-image-builder"
+  default     = ""
 }
 
 variable "image_builder_instance_type" {
   description = "EC2 instance type for the image builder."
   type        = string
   default     = "stream.standard.medium"
-}
-
-variable "image_builder_image_name" {
-  description = "AppStream image name for the image builder."
-  type        = string
-  default     = "AppStream-Win-Server-2019-07-15-2021"
 }
 
 variable "image_builder_enable_default_internet_access" {

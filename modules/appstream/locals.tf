@@ -1,6 +1,7 @@
 #locals
 locals {
   fleet_tags = {
+    Environment = var.environment
     Project     = "AppStream"
     CreatedBy   = "Terraform"
   }
