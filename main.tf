@@ -15,5 +15,6 @@ module "appstream" {
   #image_name         = "AppStream-WinServer2019-05-30-2025"
   stack_name          = "example-stack"
   session_type        = "multi_session"
+  desired_sessions    = 2
   enable_default_internet_access = "true"
 }
