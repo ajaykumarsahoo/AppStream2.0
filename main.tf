@@ -1,3 +1,10 @@
+# This Terraform configuration sets up an AWS AppStream 2.0 environment
+# with a fleet, stack, and optionally an image builder. It uses variables
+# to customize the setup, including fleet type, instance types, and image names.
+# The configuration also includes tags for resource management.
+# The fleet can be configured for either single-session or multi-session usage,
+# It supports internet access settings.
+#--------------------------------------------------------------------------
 module "appstream" {
   source = "./modules/appstream"
 
