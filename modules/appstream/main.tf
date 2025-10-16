@@ -1,6 +1,34 @@
 # Main resources for AppStream 2.0
 # This module creates an AppStream fleet, stack, and image builder with enhanced user settings.
-#-------------------------------------------------------------------------- 
+#--------------------------------------------------------------------------
+
+#Security Group for AppStream:
+resource "aws_security_group" "appstream" {
+  name        = "appstream-sg"
+  description = "Security group for AppStream resources"
+  vpc_id      = var.vpc_id != "" ? var.vpc_id : data.aws_vpc.default.id
+
+  # Allow all inbound traffic
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all inbound traffic"
+  }
+
+  # Allow all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+
+  tags = local.fleet_tags
+}
+#-------------------------------------------------------------------------
 resource "aws_appstream_fleet" "this" {
   name                         = var.fleet_name
   display_name                 = "AppStream 2.0 Fleet"
@@ -84,41 +112,10 @@ resource "aws_appstream_image_builder" "this" {
     subnet_ids         = [data.aws_subnet.supported_az_a.id] # Use only a single supported subnet for image builder
     security_group_ids = [aws_security_group.appstream.id]
   }
-  iam_role_arn = aws_iam_role.appstream_role.arn
   tags = local.fleet_tags
   depends_on = [aws_iam_role.appstream_role] 
 }
 
-resource "aws_security_group" "appstream" {
-  name        = "appstream-sg"
-  description = "Security group for AppStream resources"
-  vpc_id      = var.vpc_id != "" ? var.vpc_id : data.aws_vpc.default.id
-
-  # Allow AppStream ports (3389 for RDP, 443 for HTTPS)
-  ingress {
-    from_port   = 3389
-    to_port     = 3389
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow RDP from anywhere (for demo, restrict in production)"
-  }
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow HTTPS from anywhere"
-  }
-  # Allow all outbound traffic (internet access)
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all outbound traffic"
-  }
-  tags = local.fleet_tags
-}
 #--------------------------------------------------------------------------
 #Fleet-Stack Association:
 # This resource associates the AppStream fleet with the stack created above
@@ -148,3 +145,5 @@ resource "aws_appstream_user_stack_association" "this" {
   authentication_type  = "USERPOOL"
   depends_on = [ aws_appstream_stack.this ]
 }
+
+#--------------------------------------------------------------------------
