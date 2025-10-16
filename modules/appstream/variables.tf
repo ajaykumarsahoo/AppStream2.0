@@ -12,6 +12,7 @@ variable "fleet_name" {
 variable "instance_type" {
   description = "EC2 instance type for the fleet."
   type        = string
+  default     = "stream.standard.small"
 }
 
 variable "image_name" {
@@ -58,13 +59,13 @@ variable "image_builder_name" {
 variable "image_builder_instance_type" {
   description = "EC2 instance type for the image builder."
   type        = string
-  default     = "stream.standard.medium"
+  default     = "stream.standard.small"
 }
 
 variable "image_builder_enable_default_internet_access" {
   description = "Enable default internet access for the image builder."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "image_builder_description" {

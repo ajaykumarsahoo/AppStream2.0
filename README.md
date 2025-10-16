@@ -66,6 +66,7 @@ module "appstream" {
 - `directory_config_id`: ID of the AppStream directory config
 
 ## Change Log
+- **2025-10-16**: Added condition for Image Builder and fixed Security group rules.
 - **2025-06-04**: Initial version with fleet, stack, image builder, directory config, and security group support.
 
 ---
