@@ -26,7 +26,7 @@ resource "aws_security_group" "appstream" {
     description = "Allow all outbound traffic"
   }
 
-  tags = local.fleet_tags
+  tags = merge(local.fleet_tags)
 }
 #-------------------------------------------------------------------------
 resource "aws_appstream_fleet" "this" {
@@ -49,6 +49,7 @@ resource "aws_appstream_fleet" "this" {
     subnet_ids                 = [data.aws_subnet.supported_az_a.id, data.aws_subnet.supported_az_b.id]
     security_group_ids         = [aws_security_group.appstream.id]
   }
+  tags = merge(local.fleet_tags)
   lifecycle {
     ignore_changes             = [compute_capacity]
   }
@@ -94,7 +95,7 @@ resource "aws_appstream_stack" "this" {
     settings_group = "SettingsGroup"
   }
  
-  tags = merge(local.fleet_tags, local.other_tags)
+  tags = merge(local.fleet_tags)
 }
 #--------------------------------------------------------------------------
 #Image Builder for AppStream:
@@ -111,7 +112,7 @@ resource "aws_appstream_image_builder" "this" {
     subnet_ids         = [data.aws_subnet.supported_az_a.id] # Use only a single supported subnet for image builder
     security_group_ids = [aws_security_group.appstream.id]
   }
-  tags = merge(local.fleet_tags, local.other_tags)
+ tags = merge(local.fleet_tags)
 }
 #--------------------------------------------------------------------------
 #Fleet-Stack Association:
