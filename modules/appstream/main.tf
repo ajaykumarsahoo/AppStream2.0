@@ -49,7 +49,6 @@ resource "aws_appstream_fleet" "this" {
     subnet_ids                 = [data.aws_subnet.supported_az_a.id, data.aws_subnet.supported_az_b.id]
     security_group_ids         = [aws_security_group.appstream.id]
   }
-  tags                        = local.fleet_tags
   lifecycle {
     ignore_changes             = [compute_capacity]
   }
@@ -95,26 +94,25 @@ resource "aws_appstream_stack" "this" {
     settings_group = "SettingsGroup"
   }
  
-  tags = local.fleet_tags
+  tags = merge(local.fleet_tags, local.other_tags)
 }
 #--------------------------------------------------------------------------
 #Image Builder for AppStream:
 # This resource creates an AppStream image builder for creating custom images
 #--------------------------------------------------------------------------
 resource "aws_appstream_image_builder" "this" {
-  name                = var.image_builder_name
+  count               = var.image_builder_name != "" ? 1 : 0
   instance_type       = var.image_builder_instance_type
   image_name          = var.image_name != "" ? var.image_name : local.appstream_win_server_2019_image
-  enable_default_internet_access = var.image_builder_enable_default_internet_access
   description         = var.image_builder_description
   display_name        = var.image_builder_display_name
+  enable_default_internet_access = var.image_builder_enable_default_internet_access
   vpc_config {
     subnet_ids         = [data.aws_subnet.supported_az_a.id] # Use only a single supported subnet for image builder
     security_group_ids = [aws_security_group.appstream.id]
   }
-  tags = local.fleet_tags
+  tags = merge(local.fleet_tags, local.other_tags)
 }
-
 #--------------------------------------------------------------------------
 #Fleet-Stack Association:
 # This resource associates the AppStream fleet with the stack created above
