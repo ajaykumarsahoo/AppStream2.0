@@ -103,6 +103,7 @@ resource "aws_appstream_stack" "this" {
 #--------------------------------------------------------------------------
 resource "aws_appstream_image_builder" "this" {
   count               = var.image_builder_name != "" ? 1 : 0
+  name                = var.image_builder_name
   instance_type       = var.image_builder_instance_type
   image_name          = var.image_name != "" ? var.image_name : local.appstream_win_server_2019_image
   description         = var.image_builder_description
