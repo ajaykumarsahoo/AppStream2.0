@@ -113,7 +113,6 @@ resource "aws_appstream_image_builder" "this" {
     security_group_ids = [aws_security_group.appstream.id]
   }
   tags = local.fleet_tags
-  depends_on = [aws_iam_role.appstream_role] 
 }
 
 #--------------------------------------------------------------------------
